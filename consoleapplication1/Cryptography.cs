@@ -225,8 +225,15 @@ namespace Crypto
         /// <returns></returns>
         public static BigInteger ReturnCoprimeNumber(BigInteger a)// test, CoprimeNumbers
         {
-            BigInteger[] foo = ReturnCoprimeNumbersTable(a);
-            return foo[_rand.Next(foo.Length)];
+            var foo = new List<BigInteger>();
+            for (BigInteger i = BigInteger.ModPow(_rand.Next(1, 100), _rand.Next(1, 100), a); i < a; i++)
+            {
+                if (BigInteger.GreatestCommonDivisor(i, a) == 1)
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
 
         protected static BigInteger Modulus(BigInteger x, BigInteger m)

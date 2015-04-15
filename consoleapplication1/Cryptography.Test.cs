@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace Crypto
 {
@@ -11,11 +10,11 @@ namespace Crypto
     {
         [TestFixtureSetUp]
         public void Initialize()
-        {           
+        {
             Cryptography.Initialize(_rand);
         }
 
-        private readonly Random _rand = new Random();
+        private static readonly Random _rand = new Random();
 
         private const string plainText1 = @"
                 Oddzielili cię, syneczku, od snów, co jak motyl drżą,
@@ -107,7 +106,7 @@ namespace Crypto
             var test = new AffineCipher();
             Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
         }
-        
+
         [Test, Repeat(50)]
         public void Get128bitNumber()
         {
@@ -120,6 +119,15 @@ namespace Crypto
         public void XORCipherTest(string plainText)
         {
             var cipher = new XORCipher((short)_rand.Next(1, 100));
+            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+        }
+
+        [TestCase(plainText1)]
+        [TestCase(plainText2)]
+        [TestCase(plainText3)]
+        public void RSACipherTest(string plainText)
+        {
+            var cipher = new RSA(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b());
             Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
         }
     }

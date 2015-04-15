@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Numerics;
 
 namespace Crypto
 {
-    class RSA: Cryptography, ICipher
+    internal class RSA : Cryptography, ICipher
     {
         private BigInteger _p;
 
@@ -69,18 +65,24 @@ namespace Crypto
         public string encrypt(string plainText)
         {
             var foo = Cryptography.CodeText(plainText);
-            var temp = new BigInteger();
+            var bar = new BigInteger[foo.Length];
 
-            for (int i = 0; i < plainText.Length; i++)
+            for (int i = 0; i < foo.Length; i++)
             {
-
+                bar[i] = BigInteger.ModPow(foo[i], _e, _n);
             }
-            return Cryptography.DecodeText(foo);
+            return String.Join(" ", bar);
         }
 
-        public string decrypt(string CipherText)
+        public string decrypt(string cipherText)
         {
-            throw new NotImplementedException();
+            var foo = Array.ConvertAll<string, BigInteger>(cipherText.Split(' '), x => BigInteger.Parse(x));
+
+            for (int i = 0; i < foo.Length; i++)
+            {
+                foo[i] = BigInteger.ModPow(foo[i], _d, _n);
+            }
+            return Cryptography.DecodeText(Array.ConvertAll<BigInteger, short>(foo, x => Int16.Parse(x.ToString())));
         }
     }
 }
