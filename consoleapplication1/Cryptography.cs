@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ConsoleApplication1
+namespace Crypto
 {
     public abstract class Cryptography
     {
@@ -13,11 +12,11 @@ namespace ConsoleApplication1
 
         public static void Initialize(Random random)
         {
-            if(_rand == null)
+            if (_rand == null)
             {
                 Cryptography._rand = random;
                 FulfillCodeTable();
-            }            
+            }
         }
 
         private static void FulfillCodeTable() //test, CompareDictionaries
@@ -41,7 +40,7 @@ namespace ConsoleApplication1
             {
                 var tableLength = _shortToCharTable.Count;
                 _charToShortTable.Add((char)i, (short)(i - 29));
-                _shortToCharTable.Add((short)(i -29), (char)i);
+                _shortToCharTable.Add((short)(i - 29), (char)i);
             }
 
             for (short i = 161; i <= 500; i++)
@@ -59,7 +58,7 @@ namespace ConsoleApplication1
             get { return _charToShortTable; }
         }
 
-        public static Dictionary<short, char> ShortToCharTable 
+        public static Dictionary<short, char> ShortToCharTable
         {
             get { return _shortToCharTable; }
         }
@@ -142,38 +141,6 @@ namespace ConsoleApplication1
             return number;
         }
 
-        /// <summary>
-        /// Function returns binary representaion of given number
-        /// </summary>
-        /// <param name="number">Number to be represented in binary</param>
-        /// <param name="numberOfBitsRepresenting">User can force funtion to return binary representation with given number of bits. Number will be expanded with leading zero's</param>
-        /// <returns></returns>
-        public static string BinaryRepresentation(BigInteger number, int numberOfBitsRepresenting = 0)
-        {
-            BigInteger num = number;
-            StringBuilder rep = new StringBuilder();
-            BigInteger reminder;
-            while (true)
-            {
-                num = BigInteger.DivRem(num, 2, out reminder);
-                rep.Append(reminder);
-                if (num == 0)
-                {
-                    break;
-                }
-            }
-
-            while (rep.Length < numberOfBitsRepresenting)
-            {
-                rep.Append(0);
-            }
-
-            string foo = rep.ToString();
-            char[] bar = foo.ToArray<char>();
-            Array.Reverse(bar);
-            return new string(bar);
-        }
-
         public static short[] CodeText(string plainText)
         {
             var codedText = new short[plainText.Length];
@@ -244,7 +211,7 @@ namespace ConsoleApplication1
                 {
                     foo.Add(i);
                 }
-            }            
+            }
             if (foo.Count == 0)
                 return null;
             else
@@ -265,6 +232,33 @@ namespace ConsoleApplication1
         protected static BigInteger Modulus(BigInteger x, BigInteger m)
         {
             return (x % m + m) % m;
+        }
+
+        public static string BinaryRepresentation(BigInteger number, int numberOfBitsRepresenting = 0)
+        {
+            BigInteger num = number;
+            StringBuilder rep = new StringBuilder();
+            BigInteger reminder;
+
+            while (true)
+            {
+                num = BigInteger.DivRem(num, 2, out reminder);
+                rep.Append(reminder);
+                if (num == 0)
+                {
+                    break;
+                }
+            }
+
+            while (rep.Length < numberOfBitsRepresenting)
+            {
+                rep.Append(0);
+            }
+
+            string foo = rep.ToString();
+            char[] bar = foo.ToCharArray();
+            Array.Reverse(bar);
+            return new string(bar);
         }
     }
 

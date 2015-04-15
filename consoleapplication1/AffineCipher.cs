@@ -1,9 +1,8 @@
 ﻿using System.Numerics;
-using System.Text;
 
-namespace ConsoleApplication1
+namespace Crypto
 {
-    internal class AffineCipher : Cryptography
+    internal class AffineCipher : Cryptography, ICipher
     {
         private int _valueA;
 
@@ -56,6 +55,7 @@ namespace ConsoleApplication1
             _valueA = valueA;
             _valueB = valueB;
         }
+
         public string encrypt(string plainText)
         {
             var mod = Cryptography.CharToShortTable.Count;

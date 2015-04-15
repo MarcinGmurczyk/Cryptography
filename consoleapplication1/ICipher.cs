@@ -1,9 +1,9 @@
-﻿namespace ConsoleApplication1
+﻿namespace Crypto
 {
     internal interface ICipher
     {
-        string encrypt();
+        string encrypt(string plainText);
 
-        string decrypt();
+        string decrypt(string CipherText);
     }
 }
