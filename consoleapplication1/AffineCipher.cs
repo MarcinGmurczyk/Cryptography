@@ -1,23 +1,15 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace Crypto
 {
-    internal class AffineCipher : Cryptography, ICipher
+    public class AffineCipher : Cryptography, ICipher
     {
-        private int _valueA;
+        private AffineCipherKey _key;
 
-        public int ValueA
+        public AffineCipherKey Key
         {
-            get { return _valueA; }
-            private set { _valueA = value; }
-        }
-
-        private int _valueB;
-
-        public int ValueB
-        {
-            get { return _valueB; }
-            private set { _valueB = value; }
+            get { return _key; }
         }
 
         private string _decryptedText;
@@ -36,24 +28,9 @@ namespace Crypto
             private set { _encryptedText = value; }
         }
 
-        /// <summary>
-        /// Creates AffineCipher instance with random parameters
-        /// </summary>
-        public AffineCipher()
+        public AffineCipher(AffineCipherKey key)
         {
-            _valueA = (short)Cryptography.ReturnCoprimeNumber(Cryptography.CharToShortTable.Count);
-            _valueB = Cryptography._rand.Next(1, Cryptography.CharToShortTable.Count + 1);
-        }
-
-        /// <summary>
-        /// Creates AffineCipher instance with given parameters. (ax + b) mod m
-        /// </summary>
-        /// <param name="valueA">Value a</param>
-        /// <param name="valueB">Value b</param>
-        public AffineCipher(int valueA, int valueB)
-        {
-            _valueA = valueA;
-            _valueB = valueB;
+            _key = key;
         }
 
         public string encrypt(string plainText)
@@ -64,8 +41,8 @@ namespace Crypto
 
             for (int i = 0; i < plainText.Length; i++)
             {
-                temp = BigInteger.Multiply(_valueA, foo[i]);
-                temp = BigInteger.Add(temp, _valueB);
+                temp = BigInteger.Multiply(_key.A, foo[i]);
+                temp = BigInteger.Add(temp, _key.B);
                 foo[i] = (short)Modulus(temp, mod);
             }
             return Cryptography.DecodeText(foo);
@@ -74,21 +51,51 @@ namespace Crypto
         public string decrypt(string cipherText)
         {
             var mod = Cryptography.CharToShortTable.Count;
-            var multInverse = Cryptography.ComputeMultiplicativeInverse(_valueA, mod);
+            var multInverse = Cryptography.ComputeMultiplicativeInverse(_key.A, mod);
             var foo = Cryptography.CodeText(cipherText);
             BigInteger temp;
 
             for (int i = 0; i < cipherText.Length; i++)
             {
-                temp = BigInteger.Multiply(multInverse, foo[i] - _valueB);
+                temp = BigInteger.Multiply(multInverse, foo[i] - _key.B);
                 foo[i] = (short)Modulus(temp, mod);
             }
             return Cryptography.DecodeText(foo);
         }
+    }
 
-        public override string ToString()
+    public class AffineCipherKey
+    {
+        public short A { get; private set; }
+
+        public short B { get; private set; }
+
+        public AffineCipherKey(short valueA, short valueB)
         {
-            return "a = " + _valueA + ", b = " + _valueB;
+            if (!Array.Exists<BigInteger>(Cryptography.CoprimeNumbersTable(Cryptography.ShortToCharTable.Count), x =>
+            {
+                if (x == valueA)
+                    return true;
+                else
+                    return false;
+            }))
+            {
+                throw new ArgumentException("value A has to be coprime with a mod number(mod = " + Cryptography.ShortToCharTable.Count + ")");
+            }
+
+            if (valueB > Cryptography.ShortToCharTable.Count || valueB < 1)
+            {
+                throw new ArgumentException("value B has to be greater than 0 and smaller than mod number(mod = " + Cryptography.ShortToCharTable.Count + ")");
+            }
+
+            A = valueA;
+            B = valueB;
+        }
+
+        public AffineCipherKey()
+        {
+            A = (short)Cryptography.ReturnCoprimeNumber(Cryptography.CharToShortTable.Count);
+            B = (short)Cryptography._rand.Next(1, Cryptography.CharToShortTable.Count + 1);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Crypto
 {
     public abstract class Cryptography
     {
-        protected static Random _rand;
+        public static Random _rand;
 
         public static void Initialize(Random random)
         {
@@ -202,7 +202,7 @@ namespace Crypto
         /// </summary>
         /// <param name="a">Number to search for their coprime numbers</param>
         /// <returns>Table of coprime numbers to parameter a or returns null if parameter a has no coprime numbers</returns>
-        public static BigInteger[] ReturnCoprimeNumbersTable(BigInteger a)// test, CoprimeNumbers
+        public static BigInteger[] CoprimeNumbersTable(BigInteger a)// test, CoprimeNumbers
         {
             var foo = new List<BigInteger>();
             for (BigInteger i = 2; i < a; i++)

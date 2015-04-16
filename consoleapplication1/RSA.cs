@@ -3,22 +3,13 @@ using System.Numerics;
 
 namespace Crypto
 {
-    internal class RSA : Cryptography, ICipher
+    public class RSA : Cryptography, ICipher
     {
-        private BigInteger _p;
+        private RSAKey _key;
 
-        public BigInteger P
+        public RSAKey Key
         {
-            get { return _p; }
-            set { _p = value; }
-        }
-
-        private BigInteger _q;
-
-        public BigInteger Q
-        {
-            get { return _q; }
-            set { _q = value; }
+            get { return _key; }
         }
 
         private BigInteger _n;
@@ -33,7 +24,6 @@ namespace Crypto
         public BigInteger Fi
         {
             get { return _fi; }
-            set { _fi = value; }
         }
 
         private BigInteger _e;
@@ -41,7 +31,6 @@ namespace Crypto
         public BigInteger E
         {
             get { return _e; }
-            set { _e = value; }
         }
 
         private BigInteger _d;
@@ -49,15 +38,13 @@ namespace Crypto
         public BigInteger D
         {
             get { return _d; }
-            set { _d = value; }
         }
 
-        public RSA(BigInteger P, BigInteger Q)
+        public RSA(RSAKey key)
         {
-            _p = P;
-            _q = Q;
-            _n = BigInteger.Multiply(_p, _q);
-            _fi = BigInteger.Multiply(_p - 1, _q - 1);
+            _key = key;
+            _n = BigInteger.Multiply(Key.P, Key.Q);
+            _fi = BigInteger.Multiply(Key.P - 1, Key.Q - 1);
             _e = ReturnCoprimeNumber(_fi);
             _d = ComputeMultiplicativeInverse(_e, _fi);
         }
@@ -83,6 +70,29 @@ namespace Crypto
                 foo[i] = BigInteger.ModPow(foo[i], _d, _n);
             }
             return Cryptography.DecodeText(Array.ConvertAll<BigInteger, short>(foo, x => Int16.Parse(x.ToString())));
+        }
+    }
+
+    public class RSAKey
+    {
+        public BigInteger P { get; private set; }
+
+        public BigInteger Q { get; private set; }
+
+        public RSAKey(BigInteger P, BigInteger Q)
+        {
+            if (!Cryptography.PrimalityTest(P))
+                throw new ArgumentException("First argument is not a prime number. Only prime numbers are valid");
+            if (!Cryptography.PrimalityTest(Q))
+                throw new ArgumentException("Second argument is not a prime number. Only prime numbers are valid");
+            this.P = P;
+            this.Q = Q;
+        }
+
+        public RSAKey()
+        {
+            this.P = Cryptography.GenerateRandomPrimeNumber128b();
+            this.Q = Cryptography.GenerateRandomPrimeNumber128b();
         }
     }
 }

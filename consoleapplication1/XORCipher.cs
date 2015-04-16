@@ -2,19 +2,23 @@
 
 namespace Crypto
 {
-    internal class XORCipher : Cryptography, ICipher
+    public class XORCipher : Cryptography, ICipher
     {
         private short _key;
 
         public short Key
         {
             get { return _key; }
-            set { _key = value; }
         }
 
         public XORCipher(short key)
         {
             _key = key;
+        }
+
+        public XORCipher()
+        {
+            _key = (short)_rand.Next(1, 100);
         }
 
         public string encrypt(string plainText)

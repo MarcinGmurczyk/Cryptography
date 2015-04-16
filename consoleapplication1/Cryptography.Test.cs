@@ -74,7 +74,7 @@ namespace Crypto
                                        " 87 89 91 95 97 99 101 103 105 107 109 111 113 115 117 119 121 123";
             var table124 = foo124.Split(' ');
             coprimeTo124.AddRange(Array.ConvertAll<string, BigInteger>(table124, ele => BigInteger.Parse(ele)));
-            var result124 = Cryptography.ReturnCoprimeNumbersTable(124);
+            var result124 = Cryptography.CoprimeNumbersTable(124);
 
             Assert.AreEqual(result124, coprimeTo124.ToArray());
 
@@ -86,7 +86,7 @@ namespace Crypto
                                 " 239 241 247 251 253 257 263 265 269 271 275 277 281 283 289 293";
             var table294 = foo294.Split(' ');
             coprimeTo294.AddRange(Array.ConvertAll<string, BigInteger>(table294, ele => BigInteger.Parse(ele)));
-            var result294 = Cryptography.ReturnCoprimeNumbersTable(294);
+            var result294 = Cryptography.CoprimeNumbersTable(294);
 
             Assert.AreEqual(result294, coprimeTo294.ToArray());
         }
@@ -98,15 +98,6 @@ namespace Crypto
             Assert.AreEqual(-1, (int)Cryptography.ComputeMultiplicativeInverse(12768, 256));
         }
 
-        [TestCase(plainText1)]
-        [TestCase(plainText2)]
-        [TestCase(plainText3)]
-        public void AffineTest(string plainText)
-        {
-            var test = new AffineCipher();
-            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
-        }
-
         [Test, Repeat(50)]
         public void Get128bitNumber()
         {
@@ -116,9 +107,22 @@ namespace Crypto
         [TestCase(plainText1)]
         [TestCase(plainText2)]
         [TestCase(plainText3)]
+        public void AffineTest(string plainText)
+        {
+            var test = new AffineCipher(new AffineCipherKey());
+            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
+            test = new AffineCipher(new AffineCipherKey(23, 88));
+            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
+        }
+
+        [TestCase(plainText1)]
+        [TestCase(plainText2)]
+        [TestCase(plainText3)]
         public void XORCipherTest(string plainText)
         {
             var cipher = new XORCipher((short)_rand.Next(1, 100));
+            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+            cipher = new XORCipher();
             Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
         }
 
@@ -127,8 +131,16 @@ namespace Crypto
         [TestCase(plainText3)]
         public void RSACipherTest(string plainText)
         {
-            var cipher = new RSA(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b());
+            var cipher = new RSA(new RSAKey(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b()));
             Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+            cipher = new RSA(new RSAKey());
+            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void RSACipherException()
+        {
+            new RSA(new RSAKey(12, 7));
         }
     }
 }
