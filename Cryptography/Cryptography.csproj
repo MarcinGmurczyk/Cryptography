@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Cryptography.Test.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

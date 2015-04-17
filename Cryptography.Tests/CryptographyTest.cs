@@ -6,7 +6,7 @@ using System.Numerics;
 namespace Crypto
 {
     [TestFixture]
-    public class TestCryptography
+    public class CryptographyTest
     {
         [TestFixtureSetUp]
         public void Initialize()

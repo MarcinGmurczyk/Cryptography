@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{9B12B7EE-A992-4760-9821-7FCCABD1A1EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography", "Cryptography\Cryptography.csproj", "{9B12B7EE-A992-4760-9821-7FCCABD1A1EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography.Tests", "Cryptography.Tests\Cryptography.Tests.csproj", "{BB28B492-A719-4C06-BBF4-CA3C960AB634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9B12B7EE-A992-4760-9821-7FCCABD1A1EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B12B7EE-A992-4760-9821-7FCCABD1A1EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B12B7EE-A992-4760-9821-7FCCABD1A1EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB28B492-A719-4C06-BBF4-CA3C960AB634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB28B492-A719-4C06-BBF4-CA3C960AB634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB28B492-A719-4C06-BBF4-CA3C960AB634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB28B492-A719-4C06-BBF4-CA3C960AB634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
