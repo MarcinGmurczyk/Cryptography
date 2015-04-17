@@ -2,8 +2,8 @@
 {
     public interface ICipher
     {
-        string encrypt(string plainText);
+        string Encrypt(string plainText);
 
-        string decrypt(string cipherText);
+        string Decrypt(string cipherText);
     }
 }

@@ -2,45 +2,54 @@
 
 namespace Cryptography
 {
-    public class XORCipher : Cryptography, ICipher
+    public class XORCipher : ICipher
     {
-        private short _key;
+        private ushort _key;
 
-        public short Key
+        public ushort Key
         {
             get { return _key; }
         }
 
-        public XORCipher(short key)
+        public XORCipher(ushort key)
         {
+            if (key == 0)
+            {
+                throw new ArgumentException("Key cannot be 0");
+            }
             _key = key;
         }
 
         public XORCipher()
         {
-            _key = (short)_rand.Next(1, 100);
+            _key = (ushort)Cryptography.RandomBigInteger(1, 100);
         }
 
-        public string encrypt(string plainText)
+        public override string ToString()
         {
-            var bar = Cryptography.CodeText(plainText);
+            return "(" + _key.ToString() + ")";
+        }
+
+        public string Encrypt(string plainText)
+        {
+            var codedText = Cryptography.CodeText(plainText);
 
             for (int i = 0; i < plainText.Length; i++)
             {
-                bar[i] = (short)(bar[i] ^ _key);
+                codedText[i] = (short)(codedText[i] ^ _key);
             }
-            return String.Join<short>(" ", bar);
+            return String.Join<short>(" ", codedText);
         }
 
-        public string decrypt(string cipherText)
+        public string Decrypt(string cipherText)
         {
-            var foo = Array.ConvertAll<string, short>(cipherText.Split(' '), x => Int16.Parse(x));
+            var encryptedTable = Array.ConvertAll<string, short>(cipherText.Split(' '), x => Int16.Parse(x));
 
-            for (int i = 0; i < foo.Length; i++)
+            for (int i = 0; i < encryptedTable.Length; i++)
             {
-                foo[i] = (short)(foo[i] ^ _key);
+                encryptedTable[i] = (short)(encryptedTable[i] ^ _key);
             }
-            return Cryptography.DecodeText(foo);
+            return Cryptography.DecodeText(encryptedTable);
         }
     }
 }

@@ -8,15 +8,12 @@ namespace Cryptography
 {
     public abstract class Cryptography
     {
-        public static readonly Random _rand = new Random();
+        private static Dictionary<char, short> _charToShortTable;
+        private static Dictionary<short, char> _shortToCharTable;
 
         static Cryptography()
         {
-            FulfillCodeTable();
-        }
-
-        private static void FulfillCodeTable() //test, CompareDictionaries
-        {
+            //fulfilling code table
             _charToShortTable = new Dictionary<char, short>();
             _shortToCharTable = new Dictionary<short, char>();
 
@@ -46,8 +43,10 @@ namespace Cryptography
             }
         }
 
-        private static Dictionary<char, short> _charToShortTable;
-        private static Dictionary<short, char> _shortToCharTable;
+        //public static int Random(int min, int max)
+        //{
+        //    return _rand.Next(min, max);
+        //}
 
         public static Dictionary<char, short> CharToShortTable
         {
@@ -110,17 +109,19 @@ namespace Cryptography
             return true;
         }
 
-        private static BigInteger RandomBigInteger(BigInteger min, BigInteger max)
+        public static BigInteger RandomBigInteger(BigInteger min, BigInteger max)
         {
             return (Random128b() % (max - min)) + min;
         }
 
-        private static BigInteger Random128b()
+        public static BigInteger Random128b()
         {
-            byte[] bytes = new byte[16];
-            var rng = new RNGCryptoServiceProvider();
-            rng.GetBytes(bytes);
-            return BigInteger.Abs(new BigInteger(bytes));
+            using (var RNGCryptoRandomizer = new RNGCryptoServiceProvider())
+            {
+                byte[] bytes = new byte[16];
+                RNGCryptoRandomizer.GetBytes(bytes);
+                return BigInteger.Abs(new BigInteger(bytes));
+            }
         }
 
         /// <summary>
@@ -164,7 +165,7 @@ namespace Cryptography
         /// </summary>
         /// <param name="a">param a in equation</param>
         /// <param name="b">param b in equation</param>
-        /// <returns></returns>
+        /// <returns>Multiplicative inverse of expresion (a^-1 mod b) or returns -1 if multiplicative inverse is not present</returns>
         public static BigInteger ComputeMultiplicativeInverse(BigInteger a, BigInteger b)//test, MultiplicativeInverse
         {
             BigInteger u = 1, x = 0,
@@ -222,7 +223,7 @@ namespace Cryptography
         public static BigInteger ReturnCoprimeNumber(BigInteger a)// test, CoprimeNumbers
         {
             var foo = new List<BigInteger>();
-            for (BigInteger i = BigInteger.ModPow(_rand.Next(1, 100), _rand.Next(1, 100), a); i < a; i++)
+            for (BigInteger i = BigInteger.ModPow(RandomBigInteger(1, 100), RandomBigInteger(1, 100), a); i < a; i++)
             {
                 if (BigInteger.GreatestCommonDivisor(i, a) == 1)
                 {
@@ -232,9 +233,15 @@ namespace Cryptography
             return 0;
         }
 
-        protected static BigInteger Modulus(BigInteger x, BigInteger m)
+        /// <summary>
+        /// Returns true modulus, not a remainder
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static BigInteger Modulus(BigInteger a, BigInteger b)
         {
-            return (x % m + m) % m;
+            return (a % b + b) % b;
         }
 
         public static string BinaryRepresentation(BigInteger number, int numberOfBitsRepresenting = 0)

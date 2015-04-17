@@ -11,34 +11,46 @@ namespace Cryptography.Tests
         [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
         public void AffineTest(string plainText)
         {
-            var test = new AffineCipher(new AffineCipherKey());
-            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
-            test = new AffineCipher(new AffineCipherKey(23, 88));
-            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
+            var cipher = new AffineCipher(new AffineCipherKey());
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
+            cipher = new AffineCipher(new AffineCipherKey(23, 88));
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
         }
 
         [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
         public void XORCipherTest(string plainText)
         {
-            var cipher = new XORCipher((short)Cryptography._rand.Next(1, 100));
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+            var cipher = new XORCipher((ushort)Cryptography.RandomBigInteger(1, 100));
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
             cipher = new XORCipher();
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
         }
 
         [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
         public void RSACipherTest(string plainText)
         {
-            var cipher = new RSA(new RSAKey(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b()));
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
+            var cipher = new RSA(new RSAKey(103841, 103687));
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
             cipher = new RSA(new RSAKey());
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
-        }
+            Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
+        }     
 
         [Test, ExpectedException(typeof(ArgumentException))]
         public void RSACipherException()
         {
-            new RSA(new RSAKey(12, 7));
+            new RSA(new RSAKey(128, 256));
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void XORCipherException()
+        {
+            new XORCipher(0);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void AffineCipherException()
+        {
+            new AffineCipher(new AffineCipherKey(2, 256));
         }
     }
 }

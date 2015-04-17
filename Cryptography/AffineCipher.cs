@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Cryptography
 {
-    public class AffineCipher : Cryptography, ICipher
+    public class AffineCipher : ICipher
     {
         private AffineCipherKey _key;
 
@@ -11,29 +11,12 @@ namespace Cryptography
         {
             get { return _key; }
         }
-
-        private string _decryptedText;
-
-        public string DecryptedText
-        {
-            get { return _decryptedText; }
-            private set { _decryptedText = value; }
-        }
-
-        private string _encryptedText;
-
-        public string EncryptedText
-        {
-            get { return _encryptedText; }
-            private set { _encryptedText = value; }
-        }
-
         public AffineCipher(AffineCipherKey key)
         {
             _key = key;
         }
 
-        public string encrypt(string plainText)
+        public string Encrypt(string plainText)
         {
             var mod = Cryptography.CharToShortTable.Count;
             var foo = Cryptography.CodeText(plainText);
@@ -43,24 +26,28 @@ namespace Cryptography
             {
                 temp = BigInteger.Multiply(_key.A, foo[i]);
                 temp = BigInteger.Add(temp, _key.B);
-                foo[i] = (short)Modulus(temp, mod);
+                foo[i] = (short)Cryptography.Modulus(temp, mod);
             }
             return Cryptography.DecodeText(foo);
         }
 
-        public string decrypt(string cipherText)
+        public string Decrypt(string cipherText)
         {
             var mod = Cryptography.CharToShortTable.Count;
             var multInverse = Cryptography.ComputeMultiplicativeInverse(_key.A, mod);
-            var foo = Cryptography.CodeText(cipherText);
+            var codedText = Cryptography.CodeText(cipherText);
             BigInteger temp;
 
             for (int i = 0; i < cipherText.Length; i++)
             {
-                temp = BigInteger.Multiply(multInverse, foo[i] - _key.B);
-                foo[i] = (short)Modulus(temp, mod);
+                temp = BigInteger.Multiply(multInverse, codedText[i] - _key.B);
+                codedText[i] = (short)Cryptography.Modulus(temp, mod);
             }
-            return Cryptography.DecodeText(foo);
+            return Cryptography.DecodeText(codedText);
+        }
+        public override string ToString()
+        {
+            return "(" + _key.A + ", " + _key.B + ")";
         }
     }
 
@@ -95,7 +82,7 @@ namespace Cryptography
         public AffineCipherKey()
         {
             A = (short)Cryptography.ReturnCoprimeNumber(Cryptography.CharToShortTable.Count);
-            B = (short)Cryptography._rand.Next(1, Cryptography.CharToShortTable.Count + 1);
-        }
+            B = (short)Cryptography.RandomBigInteger(1, Cryptography.CharToShortTable.Count + 1);
+        } 
     }
 }

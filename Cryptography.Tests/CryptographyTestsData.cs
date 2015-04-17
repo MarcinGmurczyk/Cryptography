@@ -19,7 +19,7 @@ namespace Cryptography.Tests
                 i poczułeś, jak się jeży w dźwięku minut - zło.
                 Zanim padłeś, jeszcze ziemię przeżegnałeś ręką.
                 Czy to była kula, synku, czy to serce pękło?",
-                "aAąĄźŹćŃ",
+                "ąĄćńóÓŹŹŻŻżź",
                 @"!@#$%^&*()_+}{|:"":?><><||\\,./\;'][]-=90-8767435324123```~~~~~/*-/+9"};
         
         public static readonly Random _rand = new Random();
