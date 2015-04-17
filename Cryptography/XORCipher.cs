@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Crypto
+namespace Cryptography
 {
     public class XORCipher : Cryptography, ICipher
     {

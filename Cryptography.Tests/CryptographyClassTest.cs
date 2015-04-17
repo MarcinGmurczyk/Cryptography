@@ -2,39 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Cryptography;
 
-namespace Crypto
+namespace Cryptography.Tests
 {
     [TestFixture]
-    public class CryptographyTest
+    public class CryptographyClassTest
     {
-        [TestFixtureSetUp]
-        public void Initialize()
-        {
-            Cryptography.Initialize(_rand);
-        }
-
-        private static readonly Random _rand = new Random();
-
-        private const string plainText1 = @"
-                Oddzielili cię, syneczku, od snów, co jak motyl drżą,
-                haftowali ci, syneczku, smutne oczy rudą krwią,
-                malowali krajobrazy w żółte ściegi pożóg
-                wyszywali wisielcami drzew płynące morze.
-
-                    Wyuczyli cię, syneczku, ziemi twej na pamięć,
-                    gdyś jej ścieżki powycinał żelaznymi łzami.
-                    Odchowali cię w ciemności, odkarmili bochnem trwóg,
-                    przemierzyłeś po omacku najwstydliwsze z ludzkich dróg.
-
-                I wyszedłeś jasny synku, z czarną bronią w noc,
-                i poczułeś, jak się jeży w dźwięku minut - zło.
-                Zanim padłeś, jeszcze ziemię przeżegnałeś ręką.
-                Czy to była kula, synku, czy to serce pękło?";
-
-        private const string plainText2 = "aAąĄźŹćŃ";
-        private const string plainText3 = @"!@#$%^&*()_+}{|:"":?><><||\\,./\;'][]-=90-8767435324123```~~~~~/*-/+9";
-
         [Test]
         public void CompareDictionaries()
         {
@@ -58,9 +32,7 @@ namespace Crypto
             Assert.IsTrue(Cryptography.PrimalityTest(9223372036854775783));
         }
 
-        [TestCase(plainText1)]
-        [TestCase(plainText2)]
-        [TestCase(plainText3)]
+        [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
         public void CodeDecodeText(string text)
         {
             Assert.AreEqual(text, Cryptography.DecodeText(Cryptography.CodeText(text)));
@@ -102,45 +74,6 @@ namespace Crypto
         public void Get128bitNumber()
         {
             Assert.LessOrEqual(Cryptography.BinaryRepresentation(Cryptography.GenerateRandomPrimeNumber128b()).Length, 128);
-        }
-
-        [TestCase(plainText1)]
-        [TestCase(plainText2)]
-        [TestCase(plainText3)]
-        public void AffineTest(string plainText)
-        {
-            var test = new AffineCipher(new AffineCipherKey());
-            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
-            test = new AffineCipher(new AffineCipherKey(23, 88));
-            Assert.AreEqual(plainText, test.decrypt(test.encrypt(plainText)));
-        }
-
-        [TestCase(plainText1)]
-        [TestCase(plainText2)]
-        [TestCase(plainText3)]
-        public void XORCipherTest(string plainText)
-        {
-            var cipher = new XORCipher((short)_rand.Next(1, 100));
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
-            cipher = new XORCipher();
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
-        }
-
-        [TestCase(plainText1)]
-        [TestCase(plainText2)]
-        [TestCase(plainText3)]
-        public void RSACipherTest(string plainText)
-        {
-            var cipher = new RSA(new RSAKey(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b()));
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
-            cipher = new RSA(new RSAKey());
-            Assert.AreEqual(plainText, cipher.decrypt(cipher.encrypt(plainText)));
-        }
-
-        [Test, ExpectedException(typeof(ArgumentException))]
-        public void RSACipherException()
-        {
-            new RSA(new RSAKey(12, 7));
         }
     }
 }

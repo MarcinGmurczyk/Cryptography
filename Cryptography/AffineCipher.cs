@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Crypto
+namespace Cryptography
 {
     public class AffineCipher : Cryptography, ICipher
     {

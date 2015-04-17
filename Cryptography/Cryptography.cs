@@ -4,19 +4,15 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Crypto
+namespace Cryptography
 {
     public abstract class Cryptography
     {
-        public static Random _rand;
+        public static readonly Random _rand = new Random();
 
-        public static void Initialize(Random random)
+        static Cryptography()
         {
-            if (_rand == null)
-            {
-                Cryptography._rand = random;
-                FulfillCodeTable();
-            }
+            FulfillCodeTable();
         }
 
         private static void FulfillCodeTable() //test, CompareDictionaries

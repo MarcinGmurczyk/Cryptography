@@ -1,9 +1,9 @@
-﻿namespace Crypto
+﻿namespace Cryptography
 {
-    internal interface ICipher
+    public interface ICipher
     {
         string encrypt(string plainText);
 
-        string decrypt(string CipherText);
+        string decrypt(string cipherText);
     }
 }
