@@ -21,7 +21,5 @@ namespace Cryptography.Tests
                 Czy to była kula, synku, czy to serce pękło?",
                 "ąĄćńóÓŹŹŻŻżź",
                 @"!@#$%^&*()_+}{|:"":?><><||\\,./\;'][]-=90-8767435324123```~~~~~/*-/+9"};
-        
-        public static readonly Random _rand = new Random();
     }
 }

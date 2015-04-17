@@ -13,7 +13,7 @@ namespace Cryptography.Tests
         {
             var cipher = new AffineCipher(new AffineCipherKey());
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
-            cipher = new AffineCipher(new AffineCipherKey(23, 88));
+            cipher = new AffineCipher(new AffineCipherKey(23, 87));
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
         }
 
