@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Cryptography;
+
+// ReSharper disable All
 
 namespace Cryptography.Tests
 {
@@ -32,7 +33,7 @@ namespace Cryptography.Tests
             Assert.IsTrue(Cryptography.PrimalityTest(9223372036854775783));
         }
 
-        [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
+        [Test, TestCaseSource(typeof(CryptographyTestsData), "PlainText")]
         public void CodeDecodeText(string text)
         {
             Assert.AreEqual(text, Cryptography.DecodeText(Cryptography.CodeText(text)));
@@ -42,10 +43,10 @@ namespace Cryptography.Tests
         public void CoprimeNumbers()
         {
             var coprimeTo124 = new List<BigInteger>();
-            var foo124 = "3 5 7 9 11 13 15 17 19 21 23 25 27 29 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65 67 69 71 73 75 77 79 81 83 85" +
-                                       " 87 89 91 95 97 99 101 103 105 107 109 111 113 115 117 119 121 123";
+            const string foo124 = "3 5 7 9 11 13 15 17 19 21 23 25 27 29 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65 67 69 71 73 75 77 79 81 83 85" +
+                                  " 87 89 91 95 97 99 101 103 105 107 109 111 113 115 117 119 121 123";
             var table124 = foo124.Split(' ');
-            coprimeTo124.AddRange(Array.ConvertAll<string, BigInteger>(table124, ele => BigInteger.Parse(ele)));
+            coprimeTo124.AddRange(Array.ConvertAll(table124, BigInteger.Parse));
             var result124 = Cryptography.CoprimeNumbersTable(124);
 
             Assert.AreEqual(result124, coprimeTo124.ToArray());
@@ -57,7 +58,7 @@ namespace Cryptography.Tests
                                 " 137 139 143 145 149 151 155 157 163 167 169 173 179 181 185 187 191 193 197 199 205 209 211 215 221 223 227 229 233 235" +
                                 " 239 241 247 251 253 257 263 265 269 271 275 277 281 283 289 293";
             var table294 = foo294.Split(' ');
-            coprimeTo294.AddRange(Array.ConvertAll<string, BigInteger>(table294, ele => BigInteger.Parse(ele)));
+            coprimeTo294.AddRange(Array.ConvertAll(table294, ele => BigInteger.Parse(ele)));
             var result294 = Cryptography.CoprimeNumbersTable(294);
 
             Assert.AreEqual(result294, coprimeTo294.ToArray());

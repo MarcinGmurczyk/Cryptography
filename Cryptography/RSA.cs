@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Numerics;
+// ReSharper disable All
 
 namespace Cryptography
 {
     public class RSA : ICipher
     {
-        private RSAKey _key;
+        public RSAKey Key { get; private set; }
 
-        public RSAKey Key
-        {
-            get { return _key; }
-        }
         public RSA(RSAKey key)
         {
-            _key = key;
+            Key = key;
         }
 
         public string GetPrivateKey()
         {
-            return "(" + _key.D + ", " + _key.N + ")";
+            return "(" + Key.D + ", " + Key.N + ")";
         }
 
         public string GetPublicKey()
         {
-            return "(" + _key.E + ", " + _key.N + ")";
+            return "(" + Key.E + ", " + Key.N + ")";
         }
 
         public string Encrypt(string plainText)
@@ -31,22 +28,22 @@ namespace Cryptography
             var codedText = Cryptography.CodeText(plainText);
             var encodedTable = new BigInteger[codedText.Length];
 
-            for (int i = 0; i < codedText.Length; i++)
+            for (var i = 0; i < codedText.Length; i++)
             {
-                encodedTable[i] = BigInteger.ModPow(codedText[i], _key.E, _key.N);
+                encodedTable[i] = BigInteger.ModPow(codedText[i], Key.E, Key.N);
             }
-            return String.Join(" ", encodedTable);
+            return string.Join(" ", encodedTable);
         }
 
         public string Decrypt(string cipherText)
         {
-            var encodedTable = Array.ConvertAll<string, BigInteger>(cipherText.Split(' '), x => BigInteger.Parse(x));
+            var encodedTable = Array.ConvertAll(cipherText.Split(' '), BigInteger.Parse);
 
-            for (int i = 0; i < encodedTable.Length; i++)
+            for (var i = 0; i < encodedTable.Length; i++)
             {
-                encodedTable[i] = BigInteger.ModPow(encodedTable[i], _key.D, _key.N);
+                encodedTable[i] = BigInteger.ModPow(encodedTable[i], Key.D, Key.N);
             }
-            return Cryptography.DecodeText(Array.ConvertAll<BigInteger, short>(encodedTable, x => Int16.Parse(x.ToString())));
+            return Cryptography.DecodeText(Array.ConvertAll(encodedTable, x => Int16.Parse(x.ToString())));
         }
     }
 
@@ -58,19 +55,20 @@ namespace Cryptography
 
         public BigInteger N { get; private set; }
 
-        public RSAKey(BigInteger P, BigInteger Q)
+        public RSAKey(BigInteger p, BigInteger q)
         {
-            if (!Cryptography.PrimalityTest(P))
+            if (!Cryptography.PrimalityTest(p))
                 throw new ArgumentException("First argument is not a prime number. Only prime numbers are valid");
-            if (!Cryptography.PrimalityTest(Q))
+            if (!Cryptography.PrimalityTest(q))
                 throw new ArgumentException("Second argument is not a prime number. Only prime numbers are valid");
 
-            N = BigInteger.Multiply(P, Q);
-            var fi = BigInteger.Multiply(P - 1, Q - 1);
+            N = BigInteger.Multiply(p, q);
+            var fi = BigInteger.Multiply(p - 1, q - 1);
             E = Cryptography.ReturnCoprimeNumber(fi);
             D = Cryptography.ComputeMultiplicativeInverse(E, fi);
         }
+
         public RSAKey()
-            : this(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b()) {}        
+            : this(Cryptography.GenerateRandomPrimeNumber128b(), Cryptography.GenerateRandomPrimeNumber128b()) { }
     }
 }

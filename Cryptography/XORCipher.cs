@@ -4,12 +4,7 @@ namespace Cryptography
 {
     public class XORCipher : ICipher
     {
-        private ushort _key;
-
-        public ushort Key
-        {
-            get { return _key; }
-        }
+        public ushort Key { get; private set; }
 
         public XORCipher(ushort key)
         {
@@ -17,37 +12,37 @@ namespace Cryptography
             {
                 throw new ArgumentException("Key cannot be 0");
             }
-            _key = key;
+            Key = key;
         }
 
         public XORCipher()
         {
-            _key = (ushort)Cryptography.RandomBigInteger(1, 100);
+            Key = (ushort)Cryptography.RandomBigInteger(1, 100);
         }
 
         public override string ToString()
         {
-            return "(" + _key.ToString() + ")";
+            return "(" + Key.ToString() + ")";
         }
 
         public string Encrypt(string plainText)
         {
             var codedText = Cryptography.CodeText(plainText);
 
-            for (int i = 0; i < plainText.Length; i++)
+            for (var i = 0; i < plainText.Length; i++)
             {
-                codedText[i] = (short)(codedText[i] ^ _key);
+                codedText[i] = (short)(codedText[i] ^ Key);
             }
-            return String.Join<short>(" ", codedText);
+            return string.Join(" ", codedText);
         }
 
         public string Decrypt(string cipherText)
         {
-            var encryptedTable = Array.ConvertAll<string, short>(cipherText.Split(' '), x => Int16.Parse(x));
+            var encryptedTable = Array.ConvertAll(cipherText.Split(' '), short.Parse);
 
-            for (int i = 0; i < encryptedTable.Length; i++)
+            for (var i = 0; i < encryptedTable.Length; i++)
             {
-                encryptedTable[i] = (short)(encryptedTable[i] ^ _key);
+                encryptedTable[i] = (short)(encryptedTable[i] ^ Key);
             }
             return Cryptography.DecodeText(encryptedTable);
         }

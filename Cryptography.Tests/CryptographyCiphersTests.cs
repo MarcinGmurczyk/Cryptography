@@ -1,14 +1,13 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
-using Cryptography;
+
+// ReSharper disable All
 
 namespace Cryptography.Tests
 {
-    class CryptographyCiphersTests
+    internal class CryptographyCiphersTests
     {
-        [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
+        [Test, TestCaseSource(typeof(CryptographyTestsData), "PlainText")]
         public void AffineTest(string plainText)
         {
             var cipher = new AffineCipher(new AffineCipherKey());
@@ -17,7 +16,7 @@ namespace Cryptography.Tests
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
         }
 
-        [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
+        [Test, TestCaseSource(typeof(CryptographyTestsData), "PlainText")]
         public void XORCipherTest(string plainText)
         {
             var cipher = new XORCipher((ushort)Cryptography.RandomBigInteger(1, 100));
@@ -26,14 +25,14 @@ namespace Cryptography.Tests
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
         }
 
-        [Test, TestCaseSource(typeof(CryptographyTestsData), "plainText")]
+        [Test, TestCaseSource(typeof(CryptographyTestsData), "PlainText")]
         public void RSACipherTest(string plainText)
         {
             var cipher = new RSA(new RSAKey(103841, 103687));
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
             cipher = new RSA(new RSAKey());
             Assert.AreEqual(plainText, cipher.Decrypt(cipher.Encrypt(plainText)));
-        }     
+        }
 
         [Test, ExpectedException(typeof(ArgumentException))]
         public void RSACipherException()

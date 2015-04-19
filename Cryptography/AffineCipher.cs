@@ -5,27 +5,23 @@ namespace Cryptography
 {
     public class AffineCipher : ICipher
     {
-        private AffineCipherKey _key;
+        public AffineCipherKey Key { get; private set; }
 
-        public AffineCipherKey Key
-        {
-            get { return _key; }
-        }
         public AffineCipher(AffineCipherKey key)
         {
-            _key = key;
+            Key = key;
         }
 
         public string Encrypt(string plainText)
         {
             var mod = Cryptography.CharToShortTable.Count;
             var foo = Cryptography.CodeText(plainText);
-            var temp = new BigInteger();
+            BigInteger temp;
 
-            for (int i = 0; i < plainText.Length; i++)
+            for (var i = 0; i < plainText.Length; i++)
             {
-                temp = BigInteger.Multiply(_key.A, foo[i]);
-                temp = BigInteger.Add(temp, _key.B);
+                temp = BigInteger.Multiply(Key.A, foo[i]);
+                temp = BigInteger.Add(temp, Key.B);
                 foo[i] = (short)Cryptography.Modulus(temp, mod);
             }
             return Cryptography.DecodeText(foo);
@@ -34,20 +30,21 @@ namespace Cryptography
         public string Decrypt(string cipherText)
         {
             var mod = Cryptography.CharToShortTable.Count;
-            var multInverse = Cryptography.ComputeMultiplicativeInverse(_key.A, mod);
+            var multInverse = Cryptography.ComputeMultiplicativeInverse(Key.A, mod);
             var codedText = Cryptography.CodeText(cipherText);
             BigInteger temp;
 
-            for (int i = 0; i < cipherText.Length; i++)
+            for (var i = 0; i < cipherText.Length; i++)
             {
-                temp = BigInteger.Multiply(multInverse, codedText[i] - _key.B);
+                temp = BigInteger.Multiply(multInverse, codedText[i] - Key.B);
                 codedText[i] = (short)Cryptography.Modulus(temp, mod);
             }
             return Cryptography.DecodeText(codedText);
         }
+
         public override string ToString()
         {
-            return "(" + _key.A + ", " + _key.B + ")";
+            return "(" + Key.A + ", " + Key.B + ")";
         }
     }
 
@@ -59,13 +56,7 @@ namespace Cryptography
 
         public AffineCipherKey(short valueA, short valueB)
         {
-            if (!Array.Exists<BigInteger>(Cryptography.CoprimeNumbersTable(Cryptography.ShortToCharTable.Count), x =>
-            {
-                if (x == valueA)
-                    return true;
-                else
-                    return false;
-            }))
+            if (!Array.Exists(Cryptography.CoprimeNumbersTable(Cryptography.ShortToCharTable.Count), x => x == valueA))
             {
                 throw new ArgumentException("value A has to be coprime with a mod number(mod = " + Cryptography.ShortToCharTable.Count + ")");
             }
@@ -83,6 +74,6 @@ namespace Cryptography
         {
             A = (short)Cryptography.ReturnCoprimeNumber(Cryptography.CharToShortTable.Count);
             B = (short)Cryptography.RandomBigInteger(1, Cryptography.CharToShortTable.Count + 1);
-        } 
+        }
     }
 }

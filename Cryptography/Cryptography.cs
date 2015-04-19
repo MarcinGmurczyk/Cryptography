@@ -4,12 +4,14 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
+// ReSharper disable All
+
 namespace Cryptography
 {
     public abstract class Cryptography
     {
-        private static Dictionary<char, short> _charToShortTable;
-        private static Dictionary<short, char> _shortToCharTable;
+        private readonly static Dictionary<char, short> _charToShortTable;
+        private static readonly Dictionary<short, char> _shortToCharTable;
 
         static Cryptography()
         {
@@ -31,7 +33,6 @@ namespace Cryptography
 
             for (short i = 33; i <= 126; i++)
             {
-                var tableLength = _shortToCharTable.Count;
                 _charToShortTable.Add((char)i, (short)(i - 29));
                 _shortToCharTable.Add((short)(i - 29), (char)i);
             }
@@ -73,7 +74,7 @@ namespace Cryptography
             if (number < 2 || BigInteger.Remainder(number, 2) == 0)
                 return false;
 
-            BigInteger d = number - 1;
+            var d = number - 1;
             long s = 0;
 
             while (d % 2 == 0)
@@ -85,13 +86,13 @@ namespace Cryptography
             BigInteger a;
             BigInteger x;
 
-            for (int i = 0; i < iterations; i++)
+            for (var i = 0; i < iterations; i++)
             {
                 a = RandomBigInteger(2, number - 2);
                 x = BigInteger.ModPow(a, d, number);
                 if (x == 1 || x == number - 1)
                     continue;
-                int j = 1;
+                var j = 1;
                 while (j < s && x != number - 1)
                 {
                     x = BigInteger.ModPow(x, 2, number);
@@ -118,7 +119,7 @@ namespace Cryptography
         {
             using (var RNGCryptoRandomizer = new RNGCryptoServiceProvider())
             {
-                byte[] bytes = new byte[16];
+                var bytes = new byte[16];
                 RNGCryptoRandomizer.GetBytes(bytes);
                 return BigInteger.Abs(new BigInteger(bytes));
             }
@@ -141,7 +142,7 @@ namespace Cryptography
         public static short[] CodeText(string plainText)
         {
             var codedText = new short[plainText.Length];
-            for (int i = 0; i < plainText.Length; i++)
+            for (var i = 0; i < plainText.Length; i++)
             {
                 _charToShortTable.TryGetValue(plainText[i], out codedText[i]);
             }
@@ -152,7 +153,7 @@ namespace Cryptography
         {
             var decodedText = new StringBuilder();
 
-            for (int i = 0; i < codedText.Length; i++)
+            for (var i = 0; i < codedText.Length; i++)
             {
                 decodedText.Append(_shortToCharTable[codedText[i]]);
             }
@@ -175,11 +176,11 @@ namespace Cryptography
             {
                 if (w < z)
                 {
-                    BigInteger temp = u;
+                    var temp = u;
                     u = x;
                     x = temp;
 
-                    BigInteger temp2 = w;
+                    var temp2 = w;
                     w = z;
                     z = temp2;
                 }
@@ -223,7 +224,7 @@ namespace Cryptography
         public static BigInteger ReturnCoprimeNumber(BigInteger a)// test, CoprimeNumbers
         {
             var foo = new List<BigInteger>();
-            for (BigInteger i = BigInteger.ModPow(RandomBigInteger(1, 100), RandomBigInteger(1, 100), a); i < a; i++)
+            for (var i = BigInteger.ModPow(RandomBigInteger(1, 100), RandomBigInteger(1, 100), a); i < a; i++)
             {
                 if (BigInteger.GreatestCommonDivisor(i, a) == 1)
                 {
@@ -246,8 +247,8 @@ namespace Cryptography
 
         public static string BinaryRepresentation(BigInteger number, int numberOfBitsRepresenting = 0)
         {
-            BigInteger num = number;
-            StringBuilder rep = new StringBuilder();
+            var num = number;
+            var rep = new StringBuilder();
             BigInteger reminder;
 
             while (true)
@@ -265,8 +266,8 @@ namespace Cryptography
                 rep.Append(0);
             }
 
-            string foo = rep.ToString();
-            char[] bar = foo.ToCharArray();
+            var foo = rep.ToString();
+            var bar = foo.ToCharArray();
             Array.Reverse(bar);
             return new string(bar);
         }
@@ -276,7 +277,7 @@ namespace Cryptography
     {
         public static string PrintArray(this short[] arr)
         {
-            StringBuilder foo = new StringBuilder();
+            var foo = new StringBuilder();
 
             foreach (var item in arr)
             {

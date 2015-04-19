@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Cryptography.Tests
+﻿namespace Cryptography.Tests
 {
     public static class CryptographyTestsData
     {
-        public static string[] plainText = new string[] {@"
+        public static readonly string[] PlainText = new string[] {@"
                 Oddzielili cię, syneczku, od snów, co jak motyl drżą,
                 haftowali ci, syneczku, smutne oczy rudą krwią,
                 malowali krajobrazy w żółte ściegi pożóg
